@@ -7,25 +7,27 @@
 
 library(shiny)
 
-fluidPage(
-  
-  # Application title
-  titlePanel("SeaFET Data"),
-  
-  sidebarLayout(
-    sidebarPanel(
-      fileInput('file1', 'Choose SeaFET File' ),
-      checkboxInput('header', 'Header', FALSE),
-      radioButtons('sep', 'Separator',
-        c(Comma=',',
-          Tab='\t'),
-        ','),
-      numericInput('skip', 'Skip', 0,
-        min = 0, max = 21)
-    ),
+navbarPage('SeaFET QC',
+  tabPanel('Import Data',
+    sidebarLayout(
+      sidebarPanel(
+        fileInput('file1', 'Choose SeaFET File' ),
+        checkboxInput('header', 'Header', FALSE),
+        radioButtons('sep', 'Separator',
+          c(Comma=',',
+            Tab='\t'),
+          ','),
+        numericInput('skip', 'Skip', 0,
+          min = 0, max = 21)
+      ),
+      mainPanel(
+        tableOutput('contents')
+      )
+    )
+  ),
+  tabPanel('Battery Plot',
     mainPanel(
-      # plotOutput('outPlot')
-      tableOutput('contents')
+    plotOutput('batteryPlot')
     )
   )
 )

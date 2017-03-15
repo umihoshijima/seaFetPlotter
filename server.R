@@ -12,18 +12,14 @@ library(lubridate)
 
 shinyServer(function(input, output) {
   
-  
-  
-  
-  
+
   output$contents <- renderTable({
-    inFile <- input$file1
-    if (is.null (inFile))
-      return(NULL)
     
-    dat = read.csv(inFile$datapath, header=input$header, skip=input$skip, 
+  inFile = input$file1
+  if (is.null(inFile)) return (NULL)
+    dat2 <<- read.csv(inFile$datapath, header=input$header, skip=input$skip, 
       sep = input$sep)
-    
+    dat = dat2
     if(ncol(dat) == 12){
       
       #Some SeaFET models:
@@ -92,8 +88,12 @@ shinyServer(function(input, output) {
       dat$V.batt = dat$V14
     }
     
-    dat
+    dat2 <<- dat
     
+  })
+  
+  output$batteryPlot = renderPlot({
+    plot(dat2$V.batt)
   })
   
 })
