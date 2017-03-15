@@ -11,32 +11,39 @@ library(tools)
 library(lubridate)
 
 shinyServer(function(input, output) {
-
   
-
+  
+  
   
   
   output$contents <- renderTable({
     inFile <- input$file1
     if (is.null (inFile))
       return(NULL)
-
+    
     dat = read.csv(inFile$datapath, header=input$header, skip=input$skip, 
-                   sep = input$sep)
-  
+      sep = input$sep)
+    
     if(ncol(dat) == 12){
       
       #Some SeaFET models:
       colnames(dat) = c('time', 'V.batt', 'V.therm', 'V.FET.int', 'V.FET.ext',
-                        'V.power.iso', 'T.controller', 'T.Durafet', 'pn', 'sn',
-                        'pH.int', 'pH.ext')
+        'V.power.iso', 'T.controller', 'T.Durafet', 'pn', 'sn',
+        'pH.int', 'pH.ext')
     } else if(ncol(dat) == 11){
       
       #Older seafet models:
       colnames(dat) = c('time', 'V.batt', 'V.therm', 'V.FET.int', 'V.FET.ext',
-                        'V.power.iso', 'T.controller', 'T.Durafet', 'pn',
-                        'pH.int', 'pH.ext')
-    } else if (ncol(dat) == 25){
+        'V.power.iso', 'T.Durafet', 'pn',
+        'pH.int', 'pH.ext')
+    }  else if(ncol(dat) == 10){
+      
+      #Older seafet models:
+      colnames(dat) = c('time', 'V.batt', 'V.therm', 'V.FET.int', 'V.FET.ext',
+        'V.power.iso', 'T.controller', 'T.Durafet', 'pn',
+        'pH.int', 'pH.ext')
+      
+    }else if (ncol(dat) == 25){
       years = floor(dat$V2/1000)
       # get the remainder of column 2 after dividing by 1000 - this is days of the year
       days = dat$V2%%1000
@@ -84,11 +91,11 @@ shinyServer(function(input, output) {
       dat$V.therm = dat$V13
       dat$V.batt = dat$V14
     }
+    
+    dat
+    
+  })
   
-  dat
-  
-})
-
 })
 # 
 #     plot(dat$pH.int)

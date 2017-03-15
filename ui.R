@@ -8,7 +8,7 @@
 library(shiny)
 
 fluidPage(
-
+  
   # Application title
   titlePanel("SeaFET Data"),
   
@@ -17,12 +17,11 @@ fluidPage(
       fileInput('file1', 'Choose SeaFET File' ),
       checkboxInput('header', 'Header', FALSE),
       radioButtons('sep', 'Separator',
-                   c(Comma=',',
-                     Semicolon=';',
-                     Tab='\t'),
-                   ','),
+        c(Comma=',',
+          Tab='\t'),
+        ','),
       numericInput('skip', 'Skip', 0,
-                   min = 0, max = 21)
+        min = 0, max = 21)
     ),
     mainPanel(
       # plotOutput('outPlot')
