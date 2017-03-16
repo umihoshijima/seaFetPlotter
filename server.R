@@ -93,7 +93,7 @@ shinyServer(function(input, output) {
   # Second pane: plot based on Skip. 
   output$batteryPlot = renderPlot({
     dat2 = dat()[input$skipBattery+1:nrow(dat()),]
-    plot(lubridate::ymd_hms(dat2$time),dat2$V.batt)
+    plot(lubridate::ymd_hms(dat2$time),dat2$V.batt, type = 'l')
   })
   # Second pane: range based on Skip. 
   output$battery_Range <- renderText({
