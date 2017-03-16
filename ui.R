@@ -26,8 +26,22 @@ navbarPage('SeaFET QC',
     )
   ),
   tabPanel('Battery Plot',
-    mainPanel(
-    plotOutput('batteryPlot')
+    sidebarLayout(
+      sidebarPanel(
+        helpText('This is the number of lines skipped at the beginning. Use only if there are weird datea at the beginning'),
+        numericInput('skipBattery', 'Skip',0,min = 0, max = 100), 
+        helpText('Battery Range:'),
+        verbatimTextOutput('battery_Range')
+      ),
+      mainPanel(
+        plotOutput('batteryPlot')
+      )
     )
+  ),
+  tabPanel('Voltages (in/out)',
+      mainPanel(
+        plotOutput('voltagePlot')
+      )
   )
+           
 )

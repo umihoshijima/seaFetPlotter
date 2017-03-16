@@ -12,32 +12,30 @@ library(lubridate)
 
 shinyServer(function(input, output) {
   
-
-  output$contents <- renderTable({
+  dat = reactive({
     
-  inFile = input$file1
-  if (is.null(inFile)) return (NULL)
-    dat2 <<- read.csv(inFile$datapath, header=input$header, skip=input$skip, 
-      sep = input$sep)
-    dat = dat2
+    inFile = input$file1
+    if (is.null(inFile)) return (NULL)
+    dat = read.csv(inFile$datapath, header=input$header, skip=input$skip, 
+                   sep = input$sep)
     if(ncol(dat) == 12){
       
       #Some SeaFET models:
       colnames(dat) = c('time', 'V.batt', 'V.therm', 'V.FET.int', 'V.FET.ext',
-        'V.power.iso', 'T.controller', 'T.Durafet', 'pn', 'sn',
-        'pH.int', 'pH.ext')
+                        'V.power.iso', 'T.controller', 'T.Durafet', 'pn', 'sn',
+                        'pH.int', 'pH.ext')
     } else if(ncol(dat) == 11){
       
       #Older seafet models:
       colnames(dat) = c('time', 'V.batt', 'V.therm', 'V.FET.int', 'V.FET.ext',
-        'V.power.iso', 'T.Durafet', 'pn',
-        'pH.int', 'pH.ext')
+                        'V.power.iso', 'T.Durafet', 'pn',
+                        'pH.int', 'pH.ext')
     }  else if(ncol(dat) == 10){
       
       #Older seafet models:
       colnames(dat) = c('time', 'V.batt', 'V.therm', 'V.FET.int', 'V.FET.ext',
-        'V.power.iso', 'T.controller', 'T.Durafet', 'pn',
-        'pH.int', 'pH.ext')
+                        'V.power.iso', 'T.controller', 'T.Durafet', 'pn',
+                        'pH.int', 'pH.ext')
       
     }else if (ncol(dat) == 25){
       years = floor(dat$V2/1000)
@@ -54,7 +52,6 @@ shinyServer(function(input, output) {
       dat$V.FET.ext = dat$V12
       dat$V.therm = dat$V13
       dat$V.batt = dat$V14
-      #satlantics that spit out a single file natively:
     } else if (ncol(dat) == 16) {
       
       #Some satlantics have 16. whoooo!
@@ -87,21 +84,40 @@ shinyServer(function(input, output) {
       dat$V.therm = dat$V13
       dat$V.batt = dat$V14
     }
-    
-    dat2 <<- dat
-    
+    return(dat)
   })
   
+  #shows the table on the first pane
+  output$contents <- renderTable(dat())
+  
+  # Second pane: plot based on Skip. 
   output$batteryPlot = renderPlot({
-    plot(dat2$V.batt)
+    dat2 = dat()[input$skipBattery+1:nrow(dat()),]
+    plot(lubridate::ymd_hms(dat2$time),dat2$V.batt)
+  })
+  # Second pane: range based on Skip. 
+  output$battery_Range <- renderText({
+    dat2 = dat()[input$skipBattery+1:nrow(dat()),]$V.batt
+    dat2 = dat2[complete.cases(dat2)]
+    range(dat2)
   })
   
-})
-# 
-#     plot(dat$pH.int)
-#     # dat$time =  ymd_hms(dat$time, tz = 'UTC')
-# 
-#     # plot(dat$time, dat$pH.int)
+  #Third pane: plot. 
+  output$voltagePlot = renderPlot({
+    par(mar=c(5.1,4.1,4.1,4.1))
+    
+    plot(V.FET.int ~ ymd_hms(time), data = dat(), type = 'l')
 
+    par(new = TRUE)
+    
+    plot(V.FET.ext ~ ymd_hms(time), data = dat(), xaxt = 'n', yaxt = 'n', ylab = '', 
+         xlab = '', col = 'red', type = 'l')
+    axis(4, col = 'red')
+    mtext('V.FET.ext', side = 4, line = 2)
+  })
+})
+  
+  
+  
 
 
