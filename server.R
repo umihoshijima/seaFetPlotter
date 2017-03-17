@@ -3,6 +3,8 @@
 #
 # http://shiny.rstudio.com
 #
+# library(rsconnect)
+# rsconnect::deployApp('~/Dropbox/SeaFET files/seaFetPlotter/')
 
 library(shiny)
 library(dplyr)

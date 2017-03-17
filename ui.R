@@ -8,6 +8,9 @@
 library(shiny)
 
 navbarPage('SeaFET QC',
+           tabPanel('Instructions',
+                    helpText('This is a 
+                    ),
            tabPanel('Import Data',
                     sidebarLayout(
                       sidebarPanel(
